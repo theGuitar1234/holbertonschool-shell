@@ -8,9 +8,9 @@ if [ -e $school ]; then
         fi
 
         if [ -s $school ]; then
-                echo school file is empty
+                echo school file not is empty
         else
-                echo school file is not empty
+                echo school file is empty
         fi
 else
         echo school file does not exist
