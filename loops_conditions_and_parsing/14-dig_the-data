@@ -1,3 +1,16 @@
 #!/usr/bin/env bash
-#This is a comment
-awk -F' ' '{print $1, $9}' apache-access.log | sort -r -k1
+# 14-dig_the-data
+
+log_file="${1:-apache-access.log}"
+
+awk '
+  ($1 ~ /^[0-9.]+$/ && $9 ~ /^[0-9]{3}$/) {
+    key = $1 " " $9
+    count[key]++
+  }
+  END {
+    for (k in count) {
+      print count[k], k
+    }
+  }
+' "$log_file" | sort -nr
