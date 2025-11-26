@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
-# Group by IP and HTTP code, count occurrences
-awk '
-  $1 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && $9 ~ /^[0-9]{3}$/ {
-    key = $1 FS $9
-    count[key]++
-  }
-  END {
-    for (k in count) {
-      print count[k], k   # OCCURENCE_NUMBER IP HTTP_CODE
-    }
-  }
-' apache-access.log | sort -nr -k1,1
+#This is a comment
+awk '$1 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && $9 ~ /^[0-9]{3}$/ { print $1, $9 }' apache-access.log \
+  | sort \
+  | uniq -c \
+  | sort -nr -k1,1 \
+  | awk '{ print $1, $2, $3 }'
