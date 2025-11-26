@@ -1,2 +1,2 @@
 #!/bin/bash
-bash -c $'a=$(printf "%s" "$WATER" | tr water 01234)\nb=$(printf "%s" "$STIR" | tr "stir." 01234)\nprintf "obase=8\nibase=5\n%s+%s\n"$a" "$b" | bc | tr 01234567 bestchol'
+printf '%o\n' "$(( 5#$(printf '%s' "$WATER" | tr water 01234) + 5#$(printf '%s' "$STIR" | tr 'stir.' 01234) ))" | tr 01234567 bestchol
