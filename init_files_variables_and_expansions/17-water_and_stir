@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "obase=8; ibase=5; $(echo "$WATER" | tr 'water' '01234') + $(echo "$STIR" | tr 'stir.' '01234')" | bc | tr '01234567' 'bestchol'
+bash -c $'a=$(printf "%s" "$WATER" | tr water 01234)\nb=$(printf "%s" "$STIR" | tr "stir." 01234)\nprintf "obase=8\nibase=5\n%s+%s\n"$a" "$b" | bc | tr 01234567 bestchol'
