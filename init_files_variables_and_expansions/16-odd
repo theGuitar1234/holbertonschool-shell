@@ -1,2 +1,2 @@
 #!/bin/bash
-awk 'NR % 2 == 1'
+bash -c $'i=0\nwhile IFS= read -r l\ndo\nif ((i++%2==0))\nthen\nprintf "%s\\n" "$l"\nfi\ndone'
