@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#Prints the directory in a nice and clean way
+for i in *; do
+        if [ "$i" == "*" ]; then
+                continue
+        fi
+        if [ "$i" == "*_*" ]; then
+                echo "${i#*-}"
+        else
+                echo "$i"
+        fi
+done
