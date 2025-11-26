@@ -6,7 +6,5 @@ for i in *; do
         fi
         if [ "$i" == "*_*" ]; then
                 echo "${i#*-}"
-        else
-                echo "$i"
         fi
 done
