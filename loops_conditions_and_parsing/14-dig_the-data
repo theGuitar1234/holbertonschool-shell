@@ -3,14 +3,8 @@
 
 log_file="${1:-apache-access.log}"
 
-awk '
-  ($1 ~ /^[0-9.]+$/ && $9 ~ /^[0-9]{3}$/) {
-    key = $1 " " $9
-    count[key]++
-  }
-  END {
-    for (k in count) {
-      print count[k], k
-    }
-  }
-' "$log_file" | sort -nr
+awk '($1 ~ /^[0-9.]+$/ && $9 ~ /^[0-9]{3}$/) { print $1, $9 }' "$log_file" \
+  | sort \
+  | uniq -c \
+  | sort -nr \
+  | awk '{ printf "%7d %s %s\n", $1, $2, $3 }'
