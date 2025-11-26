@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 #This is a comment
-while IFS='\n' read -r user _ uid _ _ home _; do
+while IFS=':' read -r user _ uid _ _ home _; do
   printf "%s\t%s\t%s\n" "$user" "$uid" "$home"
 done < /etc/passwd
