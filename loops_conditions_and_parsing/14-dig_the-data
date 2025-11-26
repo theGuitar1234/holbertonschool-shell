@@ -1,4 +1,24 @@
 #!/usr/bin/env bash
-# Groups visitors by IP and HTTP status code, sorted by occurrence count
+# This is a comment
 
-awk '{print $1, $9}' | awk '{count[$1" "$2]++} END {for (key in count) print count[key], key}' | sort -rn
+awk '
+{
+  ip = $1
+  if (ip !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+
+  # Extract status code from: "REQUEST" <code> ...
+  if (match($0, /"[^"]*" [0-9][0-9][0-9] /)) {
+    code = substr($0, RSTART + RLENGTH - 4, 3)
+  } else if (match($0, /"[^"]*" [0-9][0-9][0-9]$/)) {
+    code = substr($0, RSTART + RLENGTH - 3, 3)
+  } else {
+    next
+  }
+
+  print ip, code
+}
+' apache-access.log \
+| sort \
+| uniq -c \
+| sort -nr \
+| awk '{ printf "%7d %s %s\n", $1, $2, $3 }'
