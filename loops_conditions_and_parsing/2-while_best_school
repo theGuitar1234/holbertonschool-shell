@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+remainder=10
+until [ "$remainder" -eq 0 ]
+do
+        _=$((remainder -= 1))
+        echo Best School
+done
