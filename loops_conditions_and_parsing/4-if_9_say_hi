@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #Prints Best School 10 times but also prints Hi at 9th iteration
 remainder=0
-until [ "$remainder" -eq 10 ]
+while [ "$remainder" -ne 10 ]
 do
         _=$((remainder += 1))
         echo "Best School"
