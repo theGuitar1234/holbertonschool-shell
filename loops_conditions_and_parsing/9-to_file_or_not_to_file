@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 #Displays information about the school file
-school="$pwd/school"
-if [ -e $school ]; then
+if [ -e "$school" ]; then
         echo school file exists
 	
-	if [ -f $school ]; then
+	if [ -f "$school" ]; then
                 echo school is a regular file
         fi
 
-        if [ -s $school ]; then
+        if [ -s "$school" ]; then
                 echo school file is not empty
         else
                 echo school file is empty
