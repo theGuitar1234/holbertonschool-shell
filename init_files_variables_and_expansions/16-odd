@@ -1,2 +1,3 @@
 #!/bin/bash
-bash -c $'i=0\nwhile IFS= read -r l\ndo\nif ((i++%2==0))\nthen\nprintf "%s\\n" "$l"\nfi\ndone'
+bash -c $'i=0\nt=$(printf "\t")\nwhile IFS= read -r l\ndo\nif ((i++%2==0))\nthen\nprintf "%s\\n" "${l%%$t*}"\nfi\ndone'
+
