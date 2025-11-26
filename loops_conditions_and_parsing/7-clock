@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 #Clock program where prints minutes and hours in their cycles
 hours=12
-minutes=59
+minutes=1
 temp=0
 while [ "$hours" -ne 0 ]
 do
         echo Hour: $temp
         _=$((temp += 1))
-        while [ "$minutes" -ne 0 ]
+        while [ "$minutes" -ne 60 ]
         do
                 echo $minutes
-                _=$((minutes -= 1))
+                _=$((minutes += 1))
         done
-        _=$((minutes = 59))
+        _=$((minutes = 1))
         _=$((hours -= 1))
 done
