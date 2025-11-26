@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-#Prints the contents of /etc/passwd in a formatted way
+#This is a note that was supposed to explain this but i am lazy
 while IFS=':' read -r user _ uid _ _ home _; do
-  printf '%s\t%s\t%s\n' "$user" "$uid" "$home"
+  printf "%s\t%s\t%s\n" "$user" "$uid" "$home"
 done < /etc/passwd
-
