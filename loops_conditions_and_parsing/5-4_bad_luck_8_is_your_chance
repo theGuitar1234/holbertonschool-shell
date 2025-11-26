@@ -3,9 +3,9 @@
 remainder=0
 while [ $remainder -ne 10 ]
 do
-        if [ "$remainder" -eq 4 ]; then
+        if [ "$remainder" -eq 3 ]; then
                 echo bad luck
-        elif [ "$remainder" -eq 8 ]; then
+        elif [ "$remainder" -eq 7 ]; then
                 echo good luck
         else
                 echo Best School
