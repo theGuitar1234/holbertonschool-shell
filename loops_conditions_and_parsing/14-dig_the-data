@@ -4,7 +4,7 @@
 awk 'BEGIN { FS="\"" }
 {
   split($1, a, " "); ip = a[1]
-  split($3, b, " "); code = b[1]   # <- status is first, size is second
+  split($3, b, " "); code = b[1]   # status (NOT size)
 
   if (ip ~ /^[0-9.]+$/ && code ~ /^[0-9][0-9][0-9]$/)
     print ip, code
