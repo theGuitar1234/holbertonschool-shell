@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 # 14-dig_the-data
 
-log_file="apache-access.log"
+awk 'BEGIN { FS="\"" }
+{
+  # $1:  IP - - [date]
+  # $3:  <space>STATUS <space>SIZE ...
+  split($1, a, " "); ip = a[1]
+  split($3, b, " "); code = b[2]
 
-awk '
-  match($0, /^([0-9.]+)[^"]"[^"]" ([0-9][0-9][0-9]) /, a) {
-    print a[1], a[2]
-  }
-' "$log_file" | sort | uniq -c | sort -nr | awk '{ printf "%7d %s %s\n", $1, $2, $3 }'
+  if (ip ~ /^[0-9.]+$/ && code ~ /^[0-9][0-9][0-9]$/)
+    print ip, code
+}' apache-access.log \
+| sort \
+| uniq -c \
+| sort -nr \
+| awk '{ printf "%7d %s %s\n", $1, $2, $3 }'
