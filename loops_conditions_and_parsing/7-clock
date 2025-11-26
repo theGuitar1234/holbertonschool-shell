@@ -14,4 +14,8 @@ do
         _=$((temp += 1))
         _=$((minutes = 1))
         _=$((hours -= 1))
+
+        if [ "$temp" -eq 12 ]; then
+                echo Hour: $temp
+        fi
 done
