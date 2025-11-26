@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-#This is a comment
-awk 'BEGIN{FS="\""}
-{
-  if (match($0, /^[0-9.]+/)) ip = substr($0, RSTART, RLENGTH); else next
-  if (match($3, /[0-9][0-9][0-9]/)) code = substr($3, RSTART, RLENGTH); else next
-  print ip, code
-}' apache-access.log \
-| sort \
-| uniq -c \
-| sort -nr \
-| awk '{ printf "%7d %s %s\n", $1, $2, $3 }'
+# Groups visitors by IP and HTTP status code, sorted by occurrence count
+
+awk '{print $1, $9}' | awk '{count[$1" "$2]++} END {for (key in count) print count[key], key}' | sort -rn
