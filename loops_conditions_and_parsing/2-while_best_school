@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#Prints Best School 10 times with while loop
 remainder=10
 until [ "$remainder" -eq 0 ]
 do
