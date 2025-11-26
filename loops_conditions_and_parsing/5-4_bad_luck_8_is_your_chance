@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#Prints good luch for 8th and bad luch for 4th iteration, Best School for the rest
+remainder=0
+while [ $remainder -ne 10 ]
+do
+        if [ "$remainder" -eq 4 ]; then
+                echo bad luck
+        elif [ "$remainder" -eq 8 ]; then
+                echo good luck
+        else
+                echo Best School
+        fi
+
+        _=$((remainder += 1))
+done
