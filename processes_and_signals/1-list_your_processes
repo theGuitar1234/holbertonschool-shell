@@ -1,5 +1,3 @@
 #!/usr/bin/env bash
 #Displays all currently active processes
-ps a u f
-
-
+ps f u a
