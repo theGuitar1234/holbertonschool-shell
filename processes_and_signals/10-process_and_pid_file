@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
-#This is a comment
-pidfile="/var/run/myscript.pid"
-echo "$$" > "$pidfile" || exit 1
-
-on_term() { echo "I hate the kill command"; rm -f "$pidfile"; exit 0; }
-on_int()  { echo "Y U no love me?!"; }
-on_quit() { rm -f "$pidfile"; exit 0; }
-
-trap on_term TERM
-trap on_int  INT
-trap on_quit QUIT
-
-while true; do
-  echo "To infinity and beyond"
-  sleep 1
+#Does some stuff
+touch /var/run/myscript.pid
+echo $$ > /var/run/myscript.pid
+while true;
+do
+        echo To infinity and beyond
+        trap "echo I hate the kill command" SIGTERM
+        trap "echo Y U no love me?!" SIGINT
+        trap "rm /var/run/myscript.pid exit" SIGQUIT
+	trap "rm /var/run/myscript.pid exit" SIGTERM
 done

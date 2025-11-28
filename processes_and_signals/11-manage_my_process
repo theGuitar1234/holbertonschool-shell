@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+if [ "$1" -eq start ]; then	
+	sudo /etc/init.d/command $1
+	echo $$ >  /var/run/my_process.pid
+	echo manage_my_process started
+elif [ "$1" -eq stop ]; then
+	rm /var/run/my_process.pid
+	echo manage_my_process stopped
+elif [ "$1" -eq restart ]; then
+	sudo /etc/init.d/command $
