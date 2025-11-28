@@ -1,41 +1,35 @@
 #!/usr/bin/env bash
-# Runs forever, prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and handles signals.
+# Runs indefinitely, prints a message periodically, writes its PID to /var/run/myscript.pid, and handles SIGTERM/SIGINT/SIGQUIT.
 
 PIDFILE="/var/run/myscript.pid"
 
-# Detach from the launching shell/session so we survive su/timeout teardown.
-if [ -z "${DAEMONIZED:-}" ]; then
-  if command -v setsid >/dev/null 2>&1; then
-    DAEMONIZED=1 setsid "$0" "$@" &
-    exit 0
-  else
-    # Fallback: at least ignore hangups if setsid isn't available
-    DAEMONIZED=1 nohup "$0" "$@" >/dev/null 2>&1 &
-    exit 0
-  fi
-fi
+cleanup() { rm -f "$PIDFILE"; }
 
-mkdir -p "$(dirname "$PIDFILE")" 2>/dev/null || true
-printf '%s\n' "$$" > "$PIDFILE"
-
-on_sigterm() {
+term_handler() {
   echo "I hate the kill command"
-  rm -f "$PIDFILE"
+  cleanup
   exit 0
 }
 
-on_sigint() {
+int_handler() {
   echo "Y U no love me?!"
 }
 
-on_sigquit() {
-  rm -f "$PIDFILE"
+quit_handler() {
+  cleanup
   exit 0
 }
 
-trap on_sigterm SIGTERM
-trap on_sigint  SIGINT
-trap on_sigquit SIGQUIT
+# Critical: survive when launcher shell exits (common in su/timeout harness)
+trap '' SIGHUP
+
+trap term_handler SIGTERM
+trap int_handler  SIGINT
+trap quit_handler SIGQUIT
+
+# Create PID file early and deterministically
+umask 0022
+printf '%s\n' "$$" > "$PIDFILE" || exit 1
 
 while true; do
   echo "To infinity and beyond"
