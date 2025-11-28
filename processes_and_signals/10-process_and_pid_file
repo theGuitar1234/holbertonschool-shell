@@ -1,33 +1,11 @@
 #!/usr/bin/env bash
-# Runs indefinitely, prints a message periodically, writes its PID to /var/run/myscript.pid, and handles signals.
-
+#PIDfile
 PIDFILE="/var/run/myscript.pid"
-
-# Signal behavior expected by these tasks:
-# - SIGTERM: print message (do NOT exit)
-# - SIGINT:  print message (do NOT exit)
-# - SIGQUIT: remove pidfile and exit
-term_handler() { echo "I hate the kill command"; }
-int_handler()  { echo "Y U no love me?!"; }
-quit_handler() { rm -f "$PIDFILE"; exit 0; }
-
-trap term_handler SIGTERM
-trap int_handler  SIGINT
-trap quit_handler SIGQUIT
-
-# Create pidfile
-mkdir -p "$(dirname "$PIDFILE")" 2>/dev/null || true
-printf '%s\n' "$$" > "$PIDFILE" || exit 1
-
-# Meta fix: make sure student_jail can "see" it
-# (test -e fails if the user can't traverse /var or /var/run)
-if [ "$(id -u)" -eq 0 ]; then
-  chmod 644 "$PIDFILE" 2>/dev/null || true
-  chmod o+x /var 2>/dev/null || true
-  chmod o+x /var/run 2>/dev/null || true
-fi
-
-while true; do
-  echo "To infinity and beyond"
-  sleep 2
+echo $$ > "$PIDFILE"
+while true
+do
+echo "To infinity and beyond"
+trap 'echo "I hate the kill command"' SIGTERM
+trap 'echo "Y U no love me?!"' SIGINT
+trap 'rm -f "$PIDFILE"' SIGQUIT
 done
