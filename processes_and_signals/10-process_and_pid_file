@@ -1,11 +1,30 @@
 #!/usr/bin/env bash
-#PIDfile
+# Runs forever, prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and handles signals.
+
 PIDFILE="/var/run/myscript.pid"
-echo $$ > "$PIDFILE"
-while true
-do
-echo "To infinity and beyond"
+
+# Detach from the parent shell/process group so sandbox cleanup doesn't kill us.
+if [ -z "${DAEMONIZED:-}" ]; then
+  export DAEMONIZED=1
+
+  # Prefer setsid; fall back to nohup.
+  if command -v setsid >/dev/null 2>&1; then
+    setsid "$0" "$@" >/dev/null 2>&1 < /dev/null &
+    exit 0
+  else
+    nohup "$0" "$@" >/dev/null 2>&1 < /dev/null &
+    exit 0
+  fi
+fi
+
+# Now we are the long-running daemon instance.
+printf '%s\n' "$$" > "$PIDFILE" || exit 1
+
 trap 'echo "I hate the kill command"' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f "$PIDFILE"' SIGQUIT
+trap 'rm -f "$PIDFILE"; exit 0' SIGQUIT
+
+while true; do
+  echo "To infinity and beyond"
+  sleep 2
 done
