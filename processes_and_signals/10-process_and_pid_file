@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-#Does some stuff
-touch /var/run/myscript.pid
-echo $$ > /var/run/myscript.pid
-trap "echo I hate the kill command" SIGTERM
-trap "echo Y U no love me?!" SIGINT
-trap "sudo rm /var/run/myscript.pid exit" SIGQUIT SIGTERM
-while true;
+#PIDfile
+PIDFILE="/var/run/myscript.pid"
+echo $$ > "$PIDFILE"
+while true
 do
-        echo To infinity and beyond
+echo "To infinity and beyond"
+trap 'echo "I hate the kill command"' SIGTERM
+trap 'echo "Y U no love me?!"' SIGINT
+trap 'rm -f "$PIDFILE"' SIGQUIT
 done
