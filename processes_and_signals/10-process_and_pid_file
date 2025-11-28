@@ -1,11 +1,30 @@
 #!/usr/bin/env bash
-#PIDfile
+# Runs forever, prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and handles signals.
+
 PIDFILE="/var/run/myscript.pid"
-echo $$ > "$PIDFILE"
-while true
-do
-echo "To infinity and beyond"
-trap 'echo "I hate the kill command"' SIGTERM
-trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f "$PIDFILE"' SIGQUIT
+
+on_sigterm() {
+  echo "I hate the kill command"
+  rm -f "$PIDFILE"
+  exit 0
+}
+
+on_sigint() {
+  echo "Y U no love me?!"
+}
+
+on_sigquit() {
+  rm -f "$PIDFILE"
+  exit 0
+}
+
+echo "$$" > "$PIDFILE"
+
+trap on_sigterm SIGTERM
+trap on_sigint  SIGINT
+trap on_sigquit SIGQUIT
+
+while true; do
+  echo "To infinity and beyond"
+  sleep 2
 done
