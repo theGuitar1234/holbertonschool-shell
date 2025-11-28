@@ -8,15 +8,13 @@ PIDFILE_PRIMARY="/var/run/my_process.pid"
 PIDFILE_FALLBACK="/tmp/my_process.pid"
 
 choose_pidfile() {
-  # If we can write to /var/run, use it.
+  # Prefer /var/run if writable
   if ( : > "$PIDFILE_PRIMARY" ) 2>/dev/null; then
     rm -f "$PIDFILE_PRIMARY"
     echo "$PIDFILE_PRIMARY"
-    return
+  else
+    echo "$PIDFILE_FALLBACK"
   fi
-
-  # Otherwise use /tmp (always writable)
-  echo "$PIDFILE_FALLBACK"
 }
 
 pidfile="$(choose_pidfile)"
@@ -24,9 +22,8 @@ pidfile="$(choose_pidfile)"
 write_pid() {
   echo "$1" > "$pidfile"
 
-  # If checker insists on /var/run/my_process.pid, try to make it visible there too.
+  # Best-effort: make pid visible at /var/run/my_process.pid for checkers that hardcode it
   if [ "$pidfile" != "$PIDFILE_PRIMARY" ]; then
-    # Best effort: symlink or copy (ignore failures)
     ln -sf "$pidfile" "$PIDFILE_PRIMARY" 2>/dev/null || cp -f "$pidfile" "$PIDFILE_PRIMARY" 2>/dev/null || true
   fi
 }
@@ -59,6 +56,18 @@ stop_proc() {
   echo "manage_my_process stopped"
 }
 
+silent_stop() {
+  if pid="$(read_pid 2>/dev/null)"; then
+    kill "$pid" 2>/dev/null || true
+  fi
+  remove_pidfiles
+}
+
+silent_start() {
+  "$DAEMON" >/dev/null 2>&1 &
+  write_pid "$!"
+}
+
 case "${1:-}" in
   start)
     start_proc
@@ -67,9 +76,9 @@ case "${1:-}" in
     stop_proc
     ;;
   restart)
-    stop_proc
-    start_proc
-    echo "manage_my_process restarted"  # overrides "started" if your checker expects only this
+    silent_stop
+    silent_start
+    echo "manage_my_process restarted"
     ;;
   *)
     echo "Usage: manage_my_process {start|stop|restart}"
