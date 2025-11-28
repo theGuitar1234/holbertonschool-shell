@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
-#PIDfile
+# Prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and reacts to signals.
+
 PIDFILE="/var/run/myscript.pid"
-echo $$ > "$PIDFILE"
-while true
-do
-echo "To infinity and beyond"
+
+# Set traps once (NOT inside the loop)
 trap 'echo "I hate the kill command"' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f "$PIDFILE"' SIGQUIT
+trap 'rm -f "$PIDFILE"; exit 0' SIGQUIT
+
+# Important in some harnesses where the parent shell dies and sends SIGHUP
+trap '' SIGHUP
+
+# Create PID file immediately
+echo "$$" > "$PIDFILE" || exit 1
+chmod 644 "$PIDFILE" 2>/dev/null || true
+
+while true; do
+  echo "To infinity and beyond"
+  sleep 2
 done
