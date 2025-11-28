@@ -1,22 +1,11 @@
 #!/usr/bin/env bash
-# Runs forever, prints status periodically, stores its PID in /var/run/myscript.pid, and reacts to SIGTERM/SIGINT/SIGQUIT.
-
+#PIDfile
 PIDFILE="/var/run/myscript.pid"
-
-remove_pidfile_if_mine() {
-  if [ -f "$PIDFILE" ] && [ "$(cat "$PIDFILE" 2>/dev/null)" = "$$" ]; then
-    rm -f "$PIDFILE"
-  fi
-}
-
-trap '' SIGHUP
+echo $$ > "$PIDFILE"
+while true
+do
+echo "To infinity and beyond"
 trap 'echo "I hate the kill command"' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
-trap 'remove_pidfile_if_mine; exit 0' SIGQUIT
-
-printf '%s\n' "$$" > "$PIDFILE" || exit 1
-
-while true; do
-  echo "To infinity and beyond"
-  sleep 2
+trap 'rm -f "$PIDFILE"' SIGQUIT
 done
