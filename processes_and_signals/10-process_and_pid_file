@@ -1,34 +1,23 @@
 #!/usr/bin/env bash
-# Runs indefinitely, prints a message periodically, writes its PID to /var/run/myscript.pid, and handles SIGTERM/SIGINT/SIGQUIT.
+# Runs forever, prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and handles signals.
 
 PIDFILE="/var/run/myscript.pid"
 
-cleanup() { rm -f "$PIDFILE"; }
-
-term_handler() {
-  echo "I hate the kill command"
-  cleanup
-  exit 0
+cleanup() {
+  rm -f "$PIDFILE"
 }
 
-int_handler() {
-  echo "Y U no love me?!"
-}
-
-quit_handler() {
-  cleanup
-  exit 0
-}
-
-# Critical: survive when launcher shell exits (common in su/timeout harness)
+# If the environment sends SIGHUP when the launching shell exits, ignore it.
 trap '' SIGHUP
 
-trap term_handler SIGTERM
-trap int_handler  SIGINT
-trap quit_handler SIGQUIT
+# 요구사항: on SIGTERM/SIGINT print text, but keep running
+trap 'echo "I hate the kill command"' SIGTERM
+trap 'echo "Y U no love me?!"' SIGINT
 
-# Create PID file early and deterministically
-umask 0022
+# 요구사항: on SIGQUIT remove pidfile (and we should exit)
+trap 'cleanup; exit 0' SIGQUIT
+
+# Create PID file immediately
 printf '%s\n' "$$" > "$PIDFILE" || exit 1
 
 while true; do
