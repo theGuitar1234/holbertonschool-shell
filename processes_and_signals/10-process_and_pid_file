@@ -1,23 +1,19 @@
 #!/usr/bin/env bash
-# Runs forever, prints a message every 2 seconds, writes its PID to /var/run/myscript.pid, and handles signals.
+# Runs forever, prints status periodically, stores its PID in /var/run/myscript.pid, and reacts to SIGTERM/SIGINT/SIGQUIT.
 
 PIDFILE="/var/run/myscript.pid"
 
-cleanup() {
-  rm -f "$PIDFILE"
+remove_pidfile_if_mine() {
+  if [ -f "$PIDFILE" ] && [ "$(cat "$PIDFILE" 2>/dev/null)" = "$$" ]; then
+    rm -f "$PIDFILE"
+  fi
 }
 
-# If the environment sends SIGHUP when the launching shell exits, ignore it.
 trap '' SIGHUP
-
-# 요구사항: on SIGTERM/SIGINT print text, but keep running
 trap 'echo "I hate the kill command"' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
+trap 'remove_pidfile_if_mine; exit 0' SIGQUIT
 
-# 요구사항: on SIGQUIT remove pidfile (and we should exit)
-trap 'cleanup; exit 0' SIGQUIT
-
-# Create PID file immediately
 printf '%s\n' "$$" > "$PIDFILE" || exit 1
 
 while true; do
