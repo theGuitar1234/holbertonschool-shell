@@ -3,6 +3,21 @@
 
 PIDFILE="/var/run/myscript.pid"
 
+# Detach from the launching shell/session so we survive su/timeout teardown.
+if [ -z "${DAEMONIZED:-}" ]; then
+  if command -v setsid >/dev/null 2>&1; then
+    DAEMONIZED=1 setsid "$0" "$@" &
+    exit 0
+  else
+    # Fallback: at least ignore hangups if setsid isn't available
+    DAEMONIZED=1 nohup "$0" "$@" >/dev/null 2>&1 &
+    exit 0
+  fi
+fi
+
+mkdir -p "$(dirname "$PIDFILE")" 2>/dev/null || true
+printf '%s\n' "$$" > "$PIDFILE"
+
 on_sigterm() {
   echo "I hate the kill command"
   rm -f "$PIDFILE"
@@ -17,8 +32,6 @@ on_sigquit() {
   rm -f "$PIDFILE"
   exit 0
 }
-
-echo "$$" > "$PIDFILE"
 
 trap on_sigterm SIGTERM
 trap on_sigint  SIGINT
