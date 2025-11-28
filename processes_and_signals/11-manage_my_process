@@ -1,10 +1,39 @@
 #!/usr/bin/env bash
-if [ "$1" -eq start ]; then	
-	sudo /etc/init.d/command $1
-	echo $$ >  /var/run/my_process.pid
-	echo manage_my_process started
-elif [ "$1" -eq stop ]; then
-	rm /var/run/my_process.pid
-	echo manage_my_process stopped
-elif [ "$1" -eq restart ]; then
-	sudo /etc/init.d/command $
+#idk
+PIDFILE="/var/run/my_process.pid"
+
+case "$1" in
+    start)
+        # Start the process
+        ./manage_my_process &
+        echo $! > "$PIDFILE"
+        echo "manage_my_process started"
+        ;;
+
+    stop)
+        # Stop the process
+        if [ -f "$PIDFILE" ]; then
+            kill "$(cat "$PIDFILE")"
+            rm -f "$PIDFILE"
+        fi
+        echo "manage_my_process stopped"
+        ;;
+
+    restart)
+        # Stop
+        if [ -f "$PIDFILE" ]; then
+            kill "$(cat "$PIDFILE")"
+            rm -f "$PIDFILE"
+        fi
+        # Start
+        ./manage_my_process &
+        echo $! > "$PIDFILE"
+        echo "manage_my_process restarted"
+        ;;
+
+    *)
+        echo "Usage: manage_my_process {start|stop|restart}"
+        exit 1
+        ;;
+esac
+~

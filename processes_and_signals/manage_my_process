@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-#This is a comment
-touch /tmp/my_process
-while true; 
-do 
-	echo "I am alive!" >> /tmp/my_process
-	sleep 2
+# Write "I am alive!" every 2 seconds
+
+while true
+do
+    echo "I am alive!" >> /tmp/my_process
+    sleep 2
 done
